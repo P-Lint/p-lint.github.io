@@ -19,7 +19,17 @@
 
 
 <h3>Usage</h3>
-<p></p>
+<p>
+	
+
+To use P-Lint, download the source code found on the tool site. In order to use P-Lint, you must first decompile your APK's to a directory on the VM or your computer. This can be done by using the provided APK decompiling tool by running the command:
+<pre>sh &lt;path/to/apk_decompiler.sh&gt; &lt;path/to/apk&gt;</pre>
+Once successfully decompiled in the directory of your choice, you then can use the analyzing component through the command line by entering the following command:
+<pre>java -jar &lt;path/to/appAnalyzer-1.0.jar&gt; &lt;path/to/decompiled/apks&gt;</pre>
+
+Once this process has started, the console will output any errors/unexpected project structures as the analyzer finds them. Once done searching through APKs, the console will inform the user of the time elapsed and results will be stored on a SQLite database. From these results, an html page will created that lists every APK that had an instance of a particular `Best Use' use case, along with the amount of occurrences this use case was found throughout the APK.
+
+</p>
 
 
 
@@ -36,28 +46,61 @@
 
 
 <h4>Use Cases</h4>
-<li><b>Use case 1:</b> Searching for instances of the method call “shouldShowRequestPermissionRationale” in java files (Good)</li>
-<li><b>Use case 2:</b> Searching for dangerous permission CAMERA that could be replaced by an intent using Android’s camera application (Not bad or good)</li>
-<li><b>Use case 3:</b> Searching through manifest for dangerous permission SEND_SMS that could possibly be replaced by an intent using Android’s existing messaging service (Not bad or good)</li>
-<li><b>Use case 4:</b> Searching through manifest for dangerous permission CALL_PHONE that could possibly be replaced by an intent using Android’s existing phone application (Not bad or good)</li>
-<li><b>Use case 5:</b> APK does NOT initialize checkSelfPermission method even if permission requests are made (Bad)</li>
-<li><b>Use case 6:</b> APK does initialize checkSelfPermission method when permission requests are made (Good)</li>
-<li><b>Use case 7:</b> Checks to see if multiple permission requests are made in close proximity in the code, possibly overwhelming user with requests (Bad)</li>
-<li><b>Use case 8:</b> Custom permission is declared in manifest, could fail depending on its dependencies to dangerous permissions if they’re not granted (Not good or bad)</li>
-<li><b>Use case 9:</b>  Permission declaration has a min SDK version set below 23, and no max SDK version. (Check that it works for BOTH permission models)</li>
-<li><b>Use case 10:</b> Permission declaration has min SDK version below 23 and max SDK version at or above 23 (Good)</li>
-<li><b>Use case 11:</b> Permission declaration has min SDK version at or above 23 (Should check how this permission is handled/used in older versions)</li>
-<li><b>Use case 12:</b> Permission declaration has max SDK version below 23 (should check to see how permission behavior occurs on new model)</li>
-<li><b>Use case 13:</b> Permission declaration has max SDK version at or above 23, but no min. SDK version (should check to see how it functions in old model)</li>
-<li><b>Use case 14:</b> APK’s min SDK version is below 23, and max SDK version is at or above 23 (Should check how it functions on BOTH models)</li>
-<li><b>Use case 15:</b> APK’s max SDK version is below 23 (Does not follow M-Permission model, disregard the results for this APK)</li>
-<li><b>Use case 16:</b> APK’s min SDK version is at or above 23 (Only needs to check that it adheres to M-Permission model)</li>
 
+<ol>
 
+<li>Searching for instances of the method call “shouldShowRequestPermissionRationale” in java files (Good)</li>
+<li>Searching for dangerous permission CAMERA that could be replaced by an intent using Android’s camera application (Not bad or good)</li>
+<li>Searching through manifest for dangerous permission SEND_SMS that could possibly be replaced by an intent using Android’s existing messaging service (Not bad or good)</li>
+<li>Searching through manifest for dangerous permission CALL_PHONE that could possibly be replaced by an intent using Android’s existing phone application (Not bad or good)</li>
+<li>APK does NOT initialize checkSelfPermission method even if permission requests are made (Bad)</li>
+<li>APK does initialize checkSelfPermission method when permission requests are made (Good)</li>
+<li>Checks to see if multiple permission requests are made in close proximity in the code, possibly overwhelming user with requests (Bad)</li>
+<li>Custom permission is declared in manifest, could fail depending on its dependencies to dangerous permissions if they’re not granted (Not good or bad)</li>
+<li>Permission declaration has a min SDK version set below 23, and no max SDK version. (Check that it works for BOTH permission models)</li>
+<li>Permission declaration has min SDK version below 23 and max SDK version at or above 23 (Good)</li>
+<li>Permission declaration has min SDK version at or above 23 (Should check how this permission is handled/used in older versions)</li>
+<li>Permission declaration has max SDK version below 23 (should check to see how permission behavior occurs on new model)</li>
+<li>Permission declaration has max SDK version at or above 23, but no min. SDK version (should check to see how it functions in old model)</li>
+<li>APK’s min SDK version is below 23, and max SDK version is at or above 23 (Should check how it functions on BOTH models)</li>
+<li>APK’s max SDK version is below 23 (Does not follow M-Permission model, disregard the results for this APK)</li>
+<li>APK’s min SDK version is at or above 23 (Only needs to check that it adheres to M-Permission model)</li>
+
+</ol>
 
 
 </p>
 
+
+
+
+<h4>Initial Results</h4>
+<p>We collected the most popular 40 Android apps from GooglePlay, and analyzed them with P-Lint. The results of our analysis are shown in the Table below:
+
+
+<table border="1">
+<tr><th>Count</th><th>Finding</th><th>Notification</th></tr>
+<tr><th></th><th></th><th></th></tr>
+
+
+
+<tr><td>81</td><td>Found custom permission declaration, make sure that it works if dangerous permissions are disabled</td><td>Neutral</td></tr>
+
+<tr><td>79</td><td>APK requests permission, but does not have 'checkSelfPermission' set up</td><td>Bad</td></tr>
+<tr><td>57</td><td>Found instance of shouldShowRequestPermissionRationale</td><td>Good</td></tr>
+<tr><td>16</td><td>Found permission that could be an intent: CAMERA</td><td>Warning</td></tr>
+<tr><td>8</td><td>Permission has max SDK before M-Permission model implemented. Check that it works in new model</td><td>Check</td></tr>
+<tr><td>4</td><td>Found permission that could be an intent: SEND\_SMS</td><td>Warning</td></tr>
+<tr><td>3</td><td>Found permission that could be an intent: CALL\_PHONE</td><td>Warning</td></tr>
+
+
+
+
+</table>
+
+
+
+</p>
 
 
 
